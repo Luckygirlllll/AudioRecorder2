@@ -13,7 +13,10 @@ import android.util.Log;
 import android.media.MediaRecorder;
 import android.media.MediaPlayer;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -28,6 +31,9 @@ public class AudioRecordTest extends Activity {
     private int labeltime;
     ArrayList <Integer> time=new ArrayList();
 
+    BufferedReader br = null;
+
+    File gpxfile;
 
     private static final String LOG_TAG = "AudioRecordTest";
     private static String mFileName = null;
@@ -237,10 +243,10 @@ public class AudioRecordTest extends Activity {
                     if (!root.exists()) {
                         root.mkdirs();
                     }
-                    File gpxfile = new File(root, fileName);
+                    gpxfile = new File(root, fileName);
 
                     FileWriter writer = new FileWriter(gpxfile, true);
-                    writer.append(sBody + "\n\n");
+                    writer.append(sBody + "\n");
                     writer.flush();
                     writer.close();
                 } catch (IOException e) {
@@ -260,10 +266,23 @@ public class AudioRecordTest extends Activity {
                 mPlayer.seekTo(labeltime);
                 onPlayLabel(mStartPlaying);
 
-                time.add(labeltime);
-                for (int i=0; i<time.size(); i++ ){
-          Log.i("LabelInfo", String.valueOf(time.get(i)));
-        }
+                StringBuilder text = new StringBuilder();
+
+                try {
+                    BufferedReader br = new BufferedReader(new FileReader(gpxfile));
+                    String line;
+
+                    while ((line = br.readLine()) != null) {
+
+                        text.append(line);
+                        text.append('\n');
+                    }
+                    br.close();
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Log.i("TextInfo", String.valueOf(text));
             }
         });
 

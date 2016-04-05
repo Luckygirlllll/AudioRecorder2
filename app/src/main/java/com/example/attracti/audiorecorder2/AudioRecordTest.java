@@ -48,6 +48,12 @@ public class AudioRecordTest extends Activity {
     private ImportantButton mLabelPlayButton= null;
     private MediaPlayer   lPlayer = null;
 
+    public int timefile;
+
+    public int getTimefile() {
+        return timefile;
+    }
+
 
     private void onRecord(boolean start) {
         if (start) {
@@ -286,7 +292,7 @@ public class AudioRecordTest extends Activity {
 
                 String[] filetime=text.toString().split("\n");
                 String first = filetime[0];
-                int timefile = Integer.parseInt(first);
+                timefile = Integer.parseInt(first);
                 Log.i("First", first);
 
                 mPlayer.seekTo(timefile);

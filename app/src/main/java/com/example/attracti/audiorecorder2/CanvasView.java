@@ -32,13 +32,29 @@ public class CanvasView extends View {
         mPaint = new Paint();
     }
 
-    public void drawLine() {
-        Random random = new Random();
-        startX = random.nextInt(1000);
-        Log.i("nextInt", String.valueOf(startX));
-        Log.i("nextInt", String.valueOf(startY));
-        startX=startY;
+    AudioRecordTest audio = new AudioRecordTest();
 
+
+
+    public void drawLine() {
+
+//        Random random = new Random();
+//        startX = random.nextInt(1000);
+//        Log.i("nextInt", String.valueOf(startX));
+//        Log.i("nextInt", String.valueOf(startY));
+//        startX=startY;
+
+        // 5 minutes = 5*60*1000 = 300 000
+        // 300 000 ---> 1000
+        // 1020 --->x
+       // x=time*1000/300 000
+       // x= time/300
+        int timeImp= audio.getTimefile();
+        Log.i("timeImp", String.valueOf(timeImp));
+        //add callback to get info from AudioRecordTest
+
+        startX=300;
+        startY=300;
         //important. Refreshes the view by calling onDraw function
         invalidate();
     }

@@ -233,7 +233,7 @@ public class AudioRecordTest extends Activity {
                 Log.i("Current", String.valueOf(labeltime));
 
                 time.add(labeltime);
-                for (int i=0; i<time.size(); i++ ){
+                for (int i = 0; i < time.size(); i++) {
                     Log.i("LabelInfo", String.valueOf(time.get(i)));
                 }
 
@@ -263,8 +263,6 @@ public class AudioRecordTest extends Activity {
                 boolean mStartPlaying = true;
                 Log.i("Button", "bingo");
                 Log.i("Current2", String.valueOf(labeltime));
-                mPlayer.seekTo(labeltime);
-                onPlayLabel(mStartPlaying);
 
                 StringBuilder text = new StringBuilder();
 
@@ -283,6 +281,17 @@ public class AudioRecordTest extends Activity {
                     e.printStackTrace();
                 }
                 Log.i("TextInfo", String.valueOf(text));
+
+                mPlayer.seekTo(labeltime);
+
+                String[] filetime=text.toString().split("\n");
+                String first = filetime[0];
+                int timefile = Integer.parseInt(first);
+                Log.i("First", first);
+
+                mPlayer.seekTo(timefile);
+                onPlayLabel(mStartPlaying);
+
             }
         });
 
@@ -292,11 +301,11 @@ public class AudioRecordTest extends Activity {
                                  ViewGroup.LayoutParams.WRAP_CONTENT,
                                  0));
                  mCanvasView = new CanvasView(getApplicationContext());
-                 ll.addView(mCanvasView,
-                         new LinearLayout.LayoutParams(
-                                 ViewGroup.LayoutParams.WRAP_CONTENT,
-                                 ViewGroup.LayoutParams.WRAP_CONTENT,
-                                 0));
+        ll.addView(mCanvasView,
+                new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        0));
                  mCanvasView.drawLine();
                  setContentView(ll);
              }

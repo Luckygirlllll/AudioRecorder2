@@ -26,7 +26,7 @@ public class AudioRecordTest extends Activity {
     CanvasView mCanvasView;
 
     private int labeltime;
-    ArrayList time;
+    ArrayList <Integer> time=new ArrayList();
 
 
     private static final String LOG_TAG = "AudioRecordTest";
@@ -223,8 +223,13 @@ public class AudioRecordTest extends Activity {
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd");
                 Date now = new Date();
                 String fileName = formatter.format(now) + ".txt";//like 2016_01_12.txt
-                String sBody = "Current" + info2;
+                String sBody = info2;
                 Log.i("Current", String.valueOf(labeltime));
+
+                time.add(labeltime);
+                for (int i=0; i<time.size(); i++ ){
+                    Log.i("LabelInfo", String.valueOf(time.get(i)));
+                }
 
                 try {
                     // File root = new File(Environment.getExternalStorageDirectory()+File.separator+"Music_Folder", "Report Files");
@@ -238,7 +243,6 @@ public class AudioRecordTest extends Activity {
                     writer.append(sBody + "\n\n");
                     writer.flush();
                     writer.close();
-                    // Toast.makeText(this, "Data has been written to Report File", Toast.LENGTH_SHORT).show();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -248,7 +252,6 @@ public class AudioRecordTest extends Activity {
 
         mLabelPlayButton.setOnClickListener(new OnClickListener() {
 
-
             @Override
             public void onClick(View v) {
                 boolean mStartPlaying = true;
@@ -257,19 +260,12 @@ public class AudioRecordTest extends Activity {
                 mPlayer.seekTo(labeltime);
                 onPlayLabel(mStartPlaying);
 
+                time.add(labeltime);
+                for (int i=0; i<time.size(); i++ ){
+          Log.i("LabelInfo", String.valueOf(time.get(i)));
+        }
             }
         });
-
-//        ArrayList time = new ArrayList();
-//
-//        if (mLabelButton.isPressed()){
-//            time.add(labeltime);
-//        }
-//        for (int i=0; i<time.size(); i++ ){
-//            Log.i("LabelInfo", (String) time.get(i));
-//        }
-
-
 
                  ll.addView(mLabelButton,
                          new LinearLayout.LayoutParams(

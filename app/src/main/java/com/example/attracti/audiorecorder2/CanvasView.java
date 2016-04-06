@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -21,22 +22,29 @@ public class CanvasView extends View {
     private int stopX = 500;
     private int stopY = 500;
 
-    public CanvasView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        mPaint = new Paint();
-    }
+    int x ;
+    int y;
+    AudioRecordTest  audio;
+//    public CanvasView(Context context, AttributeSet attrs) {
+//        super(context, attrs);
+//        mPaint = new Paint();
+//        audio = (AudioRecordTest)context;
+//
+//    }
 
     //constructor
-    public CanvasView(Context context) {
+    public CanvasView(AudioRecordTest context,int x, int y) {
         super(context);
         mPaint = new Paint();
+        audio = (AudioRecordTest)context;
+
+        this.startX = x;
+        this.startY = y;
     }
 
-    AudioRecordTest audio = new AudioRecordTest();
 
 
-
-    public void drawLine() {
+    public void drawLine(int i1, int i) {
 
 //        Random random = new Random();
 //        startX = random.nextInt(1000);
@@ -47,16 +55,26 @@ public class CanvasView extends View {
         // 5 minutes = 5*60*1000 = 300 000
         // 300 000 ---> 1000
         // 1020 --->x
-       // x=time*1000/300 000
-       // x= time/300
+        // x=time*1000/300 000
+        // x= time/300
+
         int timeImp= audio.getTimefile();
         Log.i("timeImp", String.valueOf(timeImp));
-        //add callback to get info from AudioRecordTest
+        String timeImp2=audio.getInfo2();
+        Log.i("timeImp2", String.valueOf(timeImp2));
+      //  int labeltime= audio.getLabeltime();
+      //  Log.i("labeltime", String.valueOf(labeltime));
+       // int timeImp3=Integer.parseInt(timeImp2);
+       // Log.i("timeImp3", String.valueOf(timeImp3));
 
-        startX=300;
-        startY=300;
+//        startX=x;
+//        startY=y;
+
+        Log.i("startX", String.valueOf(startX));
+        Log.i("startY", String.valueOf(startY));
         //important. Refreshes the view by calling onDraw function
         invalidate();
+
     }
 
 
@@ -72,5 +90,7 @@ public class CanvasView extends View {
         canvas.drawLine(0, 400, 1000, 400, mPaint);
         mPaint.setColor(Color.BLUE);
         canvas.drawLine(startX, 200, startY, 400, mPaint);
+        Log.i("startX2", String.valueOf(startX));
+        Log.i("startY2", String.valueOf(startY));
     }
 }

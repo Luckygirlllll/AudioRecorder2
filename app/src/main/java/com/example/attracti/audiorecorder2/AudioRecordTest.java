@@ -158,7 +158,6 @@ public class AudioRecordTest extends Activity {
             if(currlabel<filetime.length-1) {
                 currlabel++;
             }
-            Log.i("Length", String.valueOf(filetime.length));
             mPlayer.setDataSource(mFileName);
             mPlayer.prepare();
             mPlayer.seekTo(Integer.parseInt(filetime[currlabel-1]));
@@ -183,7 +182,7 @@ public class AudioRecordTest extends Activity {
         mPlayer = new MediaPlayer();
         try {
 
-            if(currlabel>0) {
+            if(currlabel>1) {
                 currlabel--;
             }
             mPlayer.setDataSource(mFileName);

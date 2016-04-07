@@ -32,11 +32,7 @@ public class AudioRecordTest extends Activity {
 
     String [] filetime = new String [100];
 
-
     CanvasView mCanvasView;
-
-
-    String second;
 
     private static int labeltime;
 
@@ -450,7 +446,6 @@ public class AudioRecordTest extends Activity {
                 String[] filetime = text.toString().split("\n");
 
                 if (current - 1 < filetime.length - 1) {
-                    second = filetime[current];
                     current++;
                 }
 

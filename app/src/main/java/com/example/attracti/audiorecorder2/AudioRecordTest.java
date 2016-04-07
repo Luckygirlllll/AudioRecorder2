@@ -132,25 +132,17 @@ public class AudioRecordTest extends Activity {
             mPlayer.prepare();
             mPlayer.seekTo(Integer.parseInt(first));
             mPlayer.start();
-            Log.i("CurrentPosition", String.valueOf(mPlayer.getCurrentPosition()));
-           // Log.i("secondImportant", second);
-            // Log.i("secondImportant", String.valueOf(Integer.parseInt(second)));
-            // Set here time of the next label
-            new CountDownTimer(3000, 1000) {
+
+            Log.i("Stop", String.valueOf(time.get(1)));
+
+            //playing the next label
+            new CountDownTimer(time.get(1), 1000) {
                 public void onTick(long millisUntilFinished) {
                 }
                 public void onFinish() {
                     stopPlaying();
                 }
             }.start();
-
-
-            while(mPlayer.getCurrentPosition() > 2000){
-         //   while( mPlayer.getCurrentPosition() <= Integer.parseInt(second)){
-                stopPlaying();
-            }
-            Log.i("CurrentPosition2", String.valueOf(mPlayer.getCurrentPosition()));
-  //          Log.i("secondImportant2", String.valueOf(Integer.parseInt(second)));
 
         } catch (IOException e) {
             Log.e(LOG_TAG, "prepar private void startPlayingmodified() {\n" +

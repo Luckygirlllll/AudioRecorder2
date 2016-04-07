@@ -30,6 +30,9 @@ public class AudioRecordTest extends Activity {
     int current=1;
     int currlabel=1;
 
+    String [] filetime = new String [100];
+
+
     CanvasView mCanvasView;
 
     String first;
@@ -136,13 +139,13 @@ public class AudioRecordTest extends Activity {
         try {
             mPlayer.setDataSource(mFileName);
             mPlayer.prepare();
-            mPlayer.seekTo(Integer.parseInt(first));
+            mPlayer.seekTo(Integer.parseInt(filetime[0]));
             mPlayer.start();
 
-            Log.i("Stop", String.valueOf(time.get(1)));
+            Log.i("Stop", String.valueOf(filetime[1]));
 
             //playing the next label
-            new CountDownTimer(time.get(1)-Integer.parseInt(first), 1000) {
+            new CountDownTimer(Integer.parseInt(filetime[1])-Integer.parseInt(filetime[0]), 1000) {
                 public void onTick(long millisUntilFinished) {
                 }
                 public void onFinish() {
@@ -151,34 +154,25 @@ public class AudioRecordTest extends Activity {
             }.start();
 
         } catch (IOException e) {
-            Log.e(LOG_TAG, "prepar private void startPlayingmodified() {\n" +
-                    "        mPlayer = new MediaPlayer();\n" +
-                    "        try {\n" +
-                    "            mPlayer.setDataSource(mFileName);\n" +
-                    "            mPlayer.prepare();\n" +
-                    "            mPlayer.seekTo(Integer.parseInt(first));\n" +
-                    "            mPlayer.start();\n" +
-                    "        } catch (IOException e) {\n" +
-                    "            Log.e(LOG_TAG, \"prepare() failed\");\n" +
-                    "        }\n" +
-                    "    }e() failed");
+               e.printStackTrace();
         }
     }
 
     private void startNextPlaying() {
         mPlayer = new MediaPlayer();
         try {
-            if(currlabel<time.size()-1) {
+            if(currlabel<filetime.length-1) {
                 currlabel++;
             }
+            Log.i("Length", String.valueOf(filetime.length));
             mPlayer.setDataSource(mFileName);
             mPlayer.prepare();
-            mPlayer.seekTo(time.get(currlabel-1));
+            mPlayer.seekTo(Integer.parseInt(filetime[currlabel-1]));
             mPlayer.start();
 
                 Log.i("CurrentLabel", String.valueOf(currlabel));
 
-                new CountDownTimer(time.get(currlabel)-time.get(currlabel - 1), 1000) {
+                new CountDownTimer(Integer.parseInt(filetime[currlabel])-Integer.parseInt(filetime[currlabel - 1]), 1000) {
                     public void onTick(long millisUntilFinished) {
                     }
 
@@ -187,17 +181,7 @@ public class AudioRecordTest extends Activity {
                     }
                 }.start();
         } catch (IOException e) {
-            Log.e(LOG_TAG, "prepar private void startPlayingmodified() {\n" +
-                    "        mPlayer = new MediaPlayer();\n" +
-                    "        try {\n" +
-                    "            mPlayer.setDataSource(mFileName);\n" +
-                    "            mPlayer.prepare();\n" +
-                    "            mPlayer.seekTo(Integer.parseInt(first));\n" +
-                    "            mPlayer.start();\n" +
-                    "        } catch (IOException e) {\n" +
-                    "            Log.e(LOG_TAG, \"prepare() failed\");\n" +
-                    "        }\n" +
-                    "    }e() failed");
+                e.printStackTrace();
         }
     }
 
@@ -210,10 +194,10 @@ public class AudioRecordTest extends Activity {
             }
             mPlayer.setDataSource(mFileName);
             mPlayer.prepare();
-            mPlayer.seekTo(time.get(currlabel-1));
+            mPlayer.seekTo(Integer.parseInt(filetime[currlabel-1]));
             mPlayer.start();
             Log.i("CurrentLabelPrevious", String.valueOf(currlabel));
-            new CountDownTimer(time.get(currlabel)-time.get(currlabel-1), 1000) {
+            new CountDownTimer(Integer.parseInt(filetime[currlabel])-Integer.parseInt(filetime[currlabel-1]), 1000) {
                 public void onTick(long millisUntilFinished) {
                 }
                 public void onFinish() {
@@ -225,7 +209,7 @@ public class AudioRecordTest extends Activity {
         }
     }
 
-    
+
     private void stopPlaying() {
         mPlayer.release();
         mPlayer = null;
@@ -326,7 +310,6 @@ public class AudioRecordTest extends Activity {
     }
 
 
-
     public AudioRecordTest() {
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
         mFileName += "/audiorecordtest.3gp";
@@ -382,8 +365,6 @@ public class AudioRecordTest extends Activity {
                 info2 = String.valueOf(mPlayer.getCurrentPosition());
                 labeltime = mPlayer.getCurrentPosition();
 
-                Log.i("BUttonClicked", "done");
-
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd");
                 Date now = new Date();
                 String fileName = formatter.format(now) + ".txt";//like 2016_01_12.txt
@@ -391,6 +372,8 @@ public class AudioRecordTest extends Activity {
                 Log.i("Current", String.valueOf(labeltime));
                 mCanvasView.drawLine(400, 400);
                 time.add(labeltime);
+
+
                 for (int i = 0; i < time.size(); i++) {
                     Log.i("LabelInfo", String.valueOf(time.get(i)));
                 }
@@ -438,9 +421,10 @@ public class AudioRecordTest extends Activity {
                 }
                 Log.i("TextInfo", String.valueOf(text));
 
-                //   mPlayer.seekTo(labeltime);
+                //TODO
+                //read data from filetime
 
-                String[] filetime = text.toString().split("\n");
+                filetime = text.toString().split("\n");
                 first = filetime[0];
                 Log.i("First2", first);
                 timefile = Integer.parseInt(first);
@@ -507,42 +491,9 @@ public class AudioRecordTest extends Activity {
             @Override
             public void onClick(View v) {
                 boolean mStartPlaying = true;
-//                StringBuilder text = new StringBuilder();
-//
-//                try {
-//                    BufferedReader br = new BufferedReader(new FileReader(gpxfile));
-//                    String line;
-//
-//                    while ((line = br.readLine()) != null) {
-//                        text.append(line);
-//                        text.append('\n');
-//                    }
-//                    br.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                Log.i("TextInfo", String.valueOf(text));
-//
-//                String[] filetime = text.toString().split("\n");
-//                if(current-1<filetime.length-1){
-//                    second = filetime[current];
-//                    current++;
-//                }
-//
-//                Log.i("Iinfo!!!!", String.valueOf(current));
-//
-//                int timeNext = Integer.parseInt(second);
-//                Log.i("Second", second);
-////                mCanvasView.drawLine(400, 400);
-//                mCanvasView = new CanvasView(AudioRecordTest.this, 800, 800);
-//                mCanvasView.invalidate();
-                //  mPlayer.seekTo(timeNext);
                 onPlayPrevious(mStartPlaying);
             }
         });
-
-
-
 
 
         Log.i("timeFile1", String.valueOf(timefile));

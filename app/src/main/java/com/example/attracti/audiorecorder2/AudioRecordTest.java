@@ -359,8 +359,6 @@ public class AudioRecordTest extends Activity {
             @Override
             public void onClick(View v) {
                 boolean mStartPlaying = true;
-                Log.i("Button", "bingo");
-                //   Log.i("Current2", String.valueOf(labeltime));
 
                 StringBuilder text = new StringBuilder();
 

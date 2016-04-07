@@ -28,6 +28,7 @@ import java.util.Date;
 public class AudioRecordTest extends Activity {
 
     int current=1;
+    int currlabel=2;
 
     CanvasView mCanvasView;
 
@@ -136,7 +137,7 @@ public class AudioRecordTest extends Activity {
             Log.i("Stop", String.valueOf(time.get(1)));
 
             //playing the next label
-            new CountDownTimer(time.get(1), 1000) {
+            new CountDownTimer(time.get(1)-Integer.parseInt(first), 1000) {
                 public void onTick(long millisUntilFinished) {
                 }
                 public void onFinish() {
@@ -166,6 +167,24 @@ public class AudioRecordTest extends Activity {
             mPlayer.prepare();
             mPlayer.seekTo(Integer.parseInt(second));
             mPlayer.start();
+
+//            if(currlabel<time.size()-1) {
+//                currlabel = time.get(currlabel);
+//                currlabel++;
+//            }
+                Log.i("CurrentLabel", String.valueOf(currlabel));
+
+                new CountDownTimer(time.get(2)-time.get(1), 1000) {
+                    public void onTick(long millisUntilFinished) {
+                    }
+
+                    public void onFinish() {
+                        stopPlaying();
+                    }
+                }.start();
+
+
+
         } catch (IOException e) {
             Log.e(LOG_TAG, "prepar private void startPlayingmodified() {\n" +
                     "        mPlayer = new MediaPlayer();\n" +
@@ -403,9 +422,6 @@ public class AudioRecordTest extends Activity {
             @Override
             public void onClick(View v) {
                 boolean mStartPlaying = true;
-                Log.i("Button", "bingo");
-                //   Log.i("Current2", String.valueOf(labeltime));
-
                 StringBuilder text = new StringBuilder();
 
                 try {
@@ -423,8 +439,6 @@ public class AudioRecordTest extends Activity {
                 }
                 Log.i("TextInfo", String.valueOf(text));
 
-                //   mPlayer.seekTo(labeltime);
-
                 String[] filetime = text.toString().split("\n");
 
                     if(current-1<filetime.length-1){
@@ -432,13 +446,7 @@ public class AudioRecordTest extends Activity {
                     current++;
                     }
 
-
                     Log.i("Iinfo!!!!", String.valueOf(current));
-
-                String third = filetime[2];
-
-                Log.i("Second2", second);
-                Log.i("Third", third);
 
                 int timeNext = Integer.parseInt(second);
                 Log.i("Second", second);

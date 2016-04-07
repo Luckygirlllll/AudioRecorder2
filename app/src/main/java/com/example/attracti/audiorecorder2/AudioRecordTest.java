@@ -69,10 +69,10 @@ public class AudioRecordTest extends Activity {
 
     private LabelButton mLabelButton = null;
     private ImportantButton mLabelPlayButton = null;
-    private MediaPlayer lPlayer = null;
 
     // go to the next label
     private NextButton mNextButton = null;
+    private PreviousButton mPreviousButton =null;
 
 
     public static int timefile = 1;
@@ -113,6 +113,15 @@ public class AudioRecordTest extends Activity {
             stopPlaying();
         }
     }
+
+    private void onPlayPrevious(boolean start) {
+        if (start) {
+            startPreviousPlaying();
+        } else {
+            stopPlaying();
+        }
+    }
+
 
 
     private void startPlaying() {
@@ -163,18 +172,20 @@ public class AudioRecordTest extends Activity {
     private void startNextPlaying() {
         mPlayer = new MediaPlayer();
         try {
+
+            if(currlabel<time.size()-1) {
+                currlabel++;
+            }
+            
             mPlayer.setDataSource(mFileName);
             mPlayer.prepare();
             mPlayer.seekTo(Integer.parseInt(second));
             mPlayer.start();
 
-            if(currlabel<time.size()-1) {
-                currlabel++;
-            }
 
                 Log.i("CurrentLabel", String.valueOf(currlabel));
 
-                new CountDownTimer(time.get(currlabel)-time.get(currlabel-1), 1000) {
+                new CountDownTimer(time.get(currlabel)-time.get(currlabel - 1), 1000) {
                     public void onTick(long millisUntilFinished) {
                     }
 
@@ -182,9 +193,6 @@ public class AudioRecordTest extends Activity {
                         stopPlaying();
                     }
                 }.start();
-
-
-
         } catch (IOException e) {
             Log.e(LOG_TAG, "prepar private void startPlayingmodified() {\n" +
                     "        mPlayer = new MediaPlayer();\n" +
@@ -199,6 +207,32 @@ public class AudioRecordTest extends Activity {
                     "    }e() failed");
         }
     }
+
+    private void startPreviousPlaying() {
+        mPlayer = new MediaPlayer();
+        try {
+
+            if(currlabel>0) {
+                currlabel--;
+            }
+            mPlayer.setDataSource(mFileName);
+            mPlayer.prepare();
+            mPlayer.seekTo(time.get(currlabel-1));
+            mPlayer.start();
+            Log.i("CurrentLabelPrevious", String.valueOf(currlabel));
+            new CountDownTimer(time.get(currlabel)-time.get(currlabel-1), 1000) {
+                public void onTick(long millisUntilFinished) {
+                }
+                public void onFinish() {
+                    stopPlaying();
+                }
+            }.start();
+        } catch (IOException e) {
+        e.printStackTrace();
+        }
+    }
+
+
 
 
     private void stopPlaying() {
@@ -293,6 +327,14 @@ public class AudioRecordTest extends Activity {
         }
     }
 
+    class PreviousButton extends Button {
+        public PreviousButton(Context ctx) {
+            super(ctx);
+            setText("Previous Label");
+        }
+    }
+
+
 
     public AudioRecordTest() {
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -312,6 +354,14 @@ public class AudioRecordTest extends Activity {
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         0));
+
+        mPreviousButton = new PreviousButton (this);
+        ll.addView(mPreviousButton,
+                new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        0));
+
 
         mRecordButton = new RecordButton(this);
         ll.addView(mRecordButton,
@@ -442,12 +492,13 @@ public class AudioRecordTest extends Activity {
 
                 String[] filetime = text.toString().split("\n");
 
-                    if(current-1<filetime.length-1){
+                if (current - 1 < filetime.length - 1) {
                     second = filetime[current];
                     current++;
-                    }
+                }
 
-                    Log.i("Iinfo!!!!", String.valueOf(current));
+
+                Log.i("Iinfo!!!!", String.valueOf(current));
 
                 int timeNext = Integer.parseInt(second);
                 Log.i("Second", second);
@@ -458,6 +509,49 @@ public class AudioRecordTest extends Activity {
                 onPlayNext(mStartPlaying);
             }
         });
+
+
+        mPreviousButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                boolean mStartPlaying = true;
+//                StringBuilder text = new StringBuilder();
+//
+//                try {
+//                    BufferedReader br = new BufferedReader(new FileReader(gpxfile));
+//                    String line;
+//
+//                    while ((line = br.readLine()) != null) {
+//                        text.append(line);
+//                        text.append('\n');
+//                    }
+//                    br.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                Log.i("TextInfo", String.valueOf(text));
+//
+//                String[] filetime = text.toString().split("\n");
+//                if(current-1<filetime.length-1){
+//                    second = filetime[current];
+//                    current++;
+//                }
+//
+//                Log.i("Iinfo!!!!", String.valueOf(current));
+//
+//                int timeNext = Integer.parseInt(second);
+//                Log.i("Second", second);
+////                mCanvasView.drawLine(400, 400);
+//                mCanvasView = new CanvasView(AudioRecordTest.this, 800, 800);
+//                mCanvasView.invalidate();
+                //  mPlayer.seekTo(timeNext);
+                onPlayPrevious(mStartPlaying);
+            }
+        });
+
+
+
 
 
         Log.i("timeFile1", String.valueOf(timefile));

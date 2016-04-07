@@ -28,7 +28,7 @@ import java.util.Date;
 public class AudioRecordTest extends Activity {
 
     int current=1;
-    int currlabel=2;
+    int currlabel=1;
 
     CanvasView mCanvasView;
 
@@ -168,13 +168,13 @@ public class AudioRecordTest extends Activity {
             mPlayer.seekTo(Integer.parseInt(second));
             mPlayer.start();
 
-//            if(currlabel<time.size()-1) {
-//                currlabel = time.get(currlabel);
-//                currlabel++;
-//            }
+            if(currlabel<time.size()-1) {
+                currlabel++;
+            }
+
                 Log.i("CurrentLabel", String.valueOf(currlabel));
 
-                new CountDownTimer(time.get(2)-time.get(1), 1000) {
+                new CountDownTimer(time.get(currlabel)-time.get(currlabel-1), 1000) {
                     public void onTick(long millisUntilFinished) {
                     }
 
@@ -372,6 +372,7 @@ public class AudioRecordTest extends Activity {
             }
         });
 
+        //play first label
 
         mLabelPlayButton.setOnClickListener(new OnClickListener() {
 

@@ -44,12 +44,6 @@ public class AudioRecordTest extends Activity {
         return labeltime;
     }
 
-    public ArrayList<Integer> getTime() {
-        return time;
-    }
-
-
-    ArrayList<Integer> time = new ArrayList();
 
     BufferedReader br = null;
     File gpxfile;
@@ -371,12 +365,6 @@ public class AudioRecordTest extends Activity {
                 String sBody = info2;
                 Log.i("Current", String.valueOf(labeltime));
                 mCanvasView.drawLine(400, 400);
-                time.add(labeltime);
-
-
-                for (int i = 0; i < time.size(); i++) {
-                    Log.i("LabelInfo", String.valueOf(time.get(i)));
-                }
 
                 try {
                     // File root = new File(Environment.getExternalStorageDirectory()+File.separator+"Music_Folder", "Report Files");

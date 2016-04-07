@@ -35,7 +35,7 @@ public class AudioRecordTest extends Activity {
 
     CanvasView mCanvasView;
 
-    String first;
+
     String second;
 
     private static int labeltime;
@@ -408,14 +408,9 @@ public class AudioRecordTest extends Activity {
                 }
                 Log.i("TextInfo", String.valueOf(text));
 
-                //TODO
-                //read data from filetime
 
                 filetime = text.toString().split("\n");
-                first = filetime[0];
-                Log.i("First2", first);
-                timefile = Integer.parseInt(first);
-                Log.i("First", first);
+
 //                mCanvasView.drawLine(400, 400);
                 mCanvasView = new CanvasView(AudioRecordTest.this, 800, 800);
                 mCanvasView.invalidate();
@@ -462,8 +457,6 @@ public class AudioRecordTest extends Activity {
 
                 Log.i("Iinfo!!!!", String.valueOf(current));
 
-                int timeNext = Integer.parseInt(second);
-                Log.i("Second", second);
 //                mCanvasView.drawLine(400, 400);
                 mCanvasView = new CanvasView(AudioRecordTest.this, 800, 800);
                 mCanvasView.invalidate();
@@ -483,9 +476,8 @@ public class AudioRecordTest extends Activity {
         });
 
 
-        Log.i("timeFile1", String.valueOf(timefile));
         mCanvasView = new CanvasView(AudioRecordTest.this, 400, 400);
-        Log.i("timeFile2", String.valueOf(timefile));
+
         ll.addView(mCanvasView,
                 new LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT,

@@ -49,9 +49,7 @@ public class AudioRecordTest extends Activity {
     ArrayList<Integer> time = new ArrayList();
 
     BufferedReader br = null;
-
     File gpxfile;
-
     String info2;
 
     public String getInfo2() {
@@ -122,8 +120,6 @@ public class AudioRecordTest extends Activity {
         }
     }
 
-
-
     private void startPlaying() {
         mPlayer = new MediaPlayer();
         try {
@@ -172,16 +168,13 @@ public class AudioRecordTest extends Activity {
     private void startNextPlaying() {
         mPlayer = new MediaPlayer();
         try {
-
             if(currlabel<time.size()-1) {
                 currlabel++;
             }
-            
             mPlayer.setDataSource(mFileName);
             mPlayer.prepare();
-            mPlayer.seekTo(Integer.parseInt(second));
+            mPlayer.seekTo(time.get(currlabel-1));
             mPlayer.start();
-
 
                 Log.i("CurrentLabel", String.valueOf(currlabel));
 
@@ -232,9 +225,7 @@ public class AudioRecordTest extends Activity {
         }
     }
 
-
-
-
+    
     private void stopPlaying() {
         mPlayer.release();
         mPlayer = null;

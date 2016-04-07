@@ -22,10 +22,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 
 public class AudioRecordTest extends Activity {
+
+    //start of the audio track
+    long start;
+    //time of the label
+    long after;
 
     int current=1;
     int currlabel=1;
@@ -198,7 +206,6 @@ public class AudioRecordTest extends Activity {
         }
     }
 
-
     private void stopPlaying() {
         mPlayer.release();
         mPlayer = null;
@@ -232,6 +239,10 @@ public class AudioRecordTest extends Activity {
         OnClickListener clicker = new OnClickListener() {
             public void onClick(View v) {
                 onRecord(mStartRecording);
+
+                start= System.currentTimeMillis();
+                android.util.Log.i("Time Current ", " Time value in millisecinds " + start);
+
                 if (mStartRecording) {
                     setText("Stop recording");
                 } else {
@@ -351,30 +362,64 @@ public class AudioRecordTest extends Activity {
             @Override
             public void onClick(View v) {
 
-                info2 = String.valueOf(mPlayer.getCurrentPosition());
-                labeltime = mPlayer.getCurrentPosition();
+                if (mPlayer == null) {
+                    after = System.currentTimeMillis();
+                    android.util.Log.i("Time after click", " Time value in millisecinds " + after);
+                    int difference = (int) (after - start);
+                    Log.i("difference", String.valueOf(difference));
 
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd");
-                Date now = new Date();
-                String fileName = formatter.format(now) + ".txt";//like 2016_01_12.txt
-                String sBody = info2;
-                Log.i("Current", String.valueOf(labeltime));
-                mCanvasView.drawLine(400, 400);
+                    // here should be a method write to file
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd");
+                    Date now = new Date();
+                    String fileName = formatter.format(now) + ".txt";//like 2016_01_12.txt
+                    int sBody = difference;
 
-                try {
-                    // File root = new File(Environment.getExternalStorageDirectory()+File.separator+"Music_Folder", "Report Files");
-                    File root = new File(Environment.getExternalStorageDirectory(), "Notes");
-                    if (!root.exists()) {
-                        root.mkdirs();
+                    Log.i("Current", String.valueOf(labeltime));
+                    mCanvasView.drawLine(400, 400);
+
+                    try {
+                        // File root = new File(Environment.getExternalStorageDirectory()+File.separator+"Music_Folder", "Report Files");
+                        File root = new File(Environment.getExternalStorageDirectory(), "Notes");
+                        if (!root.exists()) {
+                            root.mkdirs();
+                        }
+                        gpxfile = new File(root, fileName);
+
+                        FileWriter writer = new FileWriter(gpxfile, true);
+                        writer.append(sBody + "\n");
+                        writer.flush();
+                        writer.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                    gpxfile = new File(root, fileName);
 
-                    FileWriter writer = new FileWriter(gpxfile, true);
-                    writer.append(sBody + "\n");
-                    writer.flush();
-                    writer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } else {
+                    info2 = String.valueOf(mPlayer.getCurrentPosition());
+                    labeltime = mPlayer.getCurrentPosition();
+
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd");
+                    Date now = new Date();
+                    String fileName = formatter.format(now) + ".txt";//like 2016_01_12.txt
+                    String sBody = info2;
+
+                    Log.i("Current", String.valueOf(labeltime));
+                    mCanvasView.drawLine(400, 400);
+
+                    try {
+                        // File root = new File(Environment.getExternalStorageDirectory()+File.separator+"Music_Folder", "Report Files");
+                        File root = new File(Environment.getExternalStorageDirectory(), "Notes");
+                        if (!root.exists()) {
+                            root.mkdirs();
+                        }
+                        gpxfile = new File(root, fileName);
+
+                        FileWriter writer = new FileWriter(gpxfile, true);
+                        writer.append(sBody + "\n");
+                        writer.flush();
+                        writer.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -404,13 +449,15 @@ public class AudioRecordTest extends Activity {
                 }
                 Log.i("TextInfo", String.valueOf(text));
 
-
                 filetime = text.toString().split("\n");
+                Arrays.sort(filetime);
+                for(int i=0; i<filetime.length-1;i++){
+                   Log.i("Sorted array", filetime[i] );
+                }
 
 //                mCanvasView.drawLine(400, 400);
                 mCanvasView = new CanvasView(AudioRecordTest.this, 800, 800);
                 mCanvasView.invalidate();
-                // mPlayer.seekTo(timefile);
                 onPlayLabel(mStartPlaying);
             }
         });

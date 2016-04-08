@@ -33,15 +33,16 @@ public class AudioRecordTest extends Activity {
     long start;
     long after;
 
-    int current=1;
-    int currlabel=1;
+    int current = 1;
+    int currlabel = 1;
 
 
-    static String [] filetime = new String [100];
+    static String[] filetime = new String[100];
 
     public String[] getFiletime() {
         return filetime;
     }
+
     public void setFiletime(String[] filetime) {
         this.filetime = filetime;
     }
@@ -58,6 +59,7 @@ public class AudioRecordTest extends Activity {
     public String getInfo2() {
         return info2;
     }
+
     public static void setInfo2(String info2) {
         AudioRecordTest.info2 = info2;
     }
@@ -76,7 +78,7 @@ public class AudioRecordTest extends Activity {
 
     // go to the next label
     private NextButton mNextButton = null;
-    private PreviousButton mPreviousButton =null;
+    private PreviousButton mPreviousButton = null;
 
     public static int timefile = 1;
 
@@ -147,42 +149,43 @@ public class AudioRecordTest extends Activity {
             Log.i("Stop", String.valueOf(filetime[1]));
 
             //playing the next label
-            new CountDownTimer(Integer.parseInt(filetime[1])-Integer.parseInt(filetime[0]), 1000) {
+            new CountDownTimer(Integer.parseInt(filetime[1]) - Integer.parseInt(filetime[0]), 1000) {
                 public void onTick(long millisUntilFinished) {
                 }
+
                 public void onFinish() {
                     stopPlaying();
                 }
             }.start();
 
         } catch (IOException e) {
-               e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
     private void startNextPlaying() {
         mPlayer = new MediaPlayer();
         try {
-            if(currlabel<filetime.length-1) {
+            if (currlabel < filetime.length - 1) {
                 currlabel++;
             }
             mPlayer.setDataSource(mFileName);
             mPlayer.prepare();
-            mPlayer.seekTo(Integer.parseInt(filetime[currlabel-1]));
+            mPlayer.seekTo(Integer.parseInt(filetime[currlabel - 1]));
             mPlayer.start();
 
-                Log.i("CurrentLabel", String.valueOf(currlabel));
+            Log.i("CurrentLabel", String.valueOf(currlabel));
 
-                new CountDownTimer(Integer.parseInt(filetime[currlabel])-Integer.parseInt(filetime[currlabel - 1]), 1000) {
-                    public void onTick(long millisUntilFinished) {
-                    }
+            new CountDownTimer(Integer.parseInt(filetime[currlabel]) - Integer.parseInt(filetime[currlabel - 1]), 1000) {
+                public void onTick(long millisUntilFinished) {
+                }
 
-                    public void onFinish() {
-                        stopPlaying();
-                    }
-                }.start();
+                public void onFinish() {
+                    stopPlaying();
+                }
+            }.start();
         } catch (IOException e) {
-                e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -190,23 +193,24 @@ public class AudioRecordTest extends Activity {
         mPlayer = new MediaPlayer();
         try {
 
-            if(currlabel>1) {
+            if (currlabel > 1) {
                 currlabel--;
             }
             mPlayer.setDataSource(mFileName);
             mPlayer.prepare();
-            mPlayer.seekTo(Integer.parseInt(filetime[currlabel-1]));
+            mPlayer.seekTo(Integer.parseInt(filetime[currlabel - 1]));
             mPlayer.start();
             Log.i("CurrentLabelPrevious", String.valueOf(currlabel));
-            new CountDownTimer(Integer.parseInt(filetime[currlabel])-Integer.parseInt(filetime[currlabel-1]), 1000) {
+            new CountDownTimer(Integer.parseInt(filetime[currlabel]) - Integer.parseInt(filetime[currlabel - 1]), 1000) {
                 public void onTick(long millisUntilFinished) {
                 }
+
                 public void onFinish() {
                     stopPlaying();
                 }
             }.start();
         } catch (IOException e) {
-        e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -270,7 +274,7 @@ public class AudioRecordTest extends Activity {
             public void onClick(View v) {
                 onRecord(mStartRecording);
 
-                start= System.currentTimeMillis();
+                start = System.currentTimeMillis();
                 android.util.Log.i("Time Current ", " Time value in millisecinds " + start);
 
                 if (mStartRecording) {
@@ -309,6 +313,7 @@ public class AudioRecordTest extends Activity {
             setText("Start playing");
             setOnClickListener(clicker);
         }
+
     }
 
     class LabelButton extends Button {
@@ -339,7 +344,6 @@ public class AudioRecordTest extends Activity {
         }
     }
 
-
     public AudioRecordTest() {
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
         mFileName += "/audiorecordtest.3gp";
@@ -359,7 +363,7 @@ public class AudioRecordTest extends Activity {
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         0));
 
-        mPreviousButton = new PreviousButton (this);
+        mPreviousButton = new PreviousButton(this);
         ll.addView(mPreviousButton,
                 new LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -458,44 +462,15 @@ public class AudioRecordTest extends Activity {
             }
         });
 
-
-
-
         //play first label
         mLabelPlayButton.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 boolean mStartPlaying = true;
-
                 readFromFile();
-
-
-//                StringBuilder text = new StringBuilder();
-//
-//                try {
-//                    BufferedReader br = new BufferedReader(new FileReader(gpxfile));
-//                    String line;
-//
-//                    while ((line = br.readLine()) != null) {
-//
-//                        text.append(line);
-//                        text.append('\n');
-//                    }
-//                    br.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                Log.i("TextInfo", String.valueOf(text));
-//
-//                filetime = text.toString().split("\n");
-//                Arrays.sort(filetime);
-//                for (int i = 0; i < filetime.length - 1; i++) {
-//                    Log.i("Sorted array", filetime[i]);
-//                }
-
                 mCanvasView = new CanvasView(AudioRecordTest.this);
-
+             //   mCanvasView.drawLine();
                 onPlayLabel(mStartPlaying);
             }
         });
@@ -564,8 +539,6 @@ public class AudioRecordTest extends Activity {
 
         setContentView(ll);
     }
-
-
 
     @Override
     public void onPause() {

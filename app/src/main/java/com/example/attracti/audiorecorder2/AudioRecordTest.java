@@ -37,10 +37,13 @@ public class AudioRecordTest extends Activity {
     int currlabel=1;
 
 
+    static String [] filetime = new String [100];
 
-    String [] filetime = new String [100];
     public String[] getFiletime() {
         return filetime;
+    }
+    public void setFiletime(String[] filetime) {
+        this.filetime = filetime;
     }
 
     CanvasView mCanvasView;
@@ -49,10 +52,14 @@ public class AudioRecordTest extends Activity {
 
     BufferedReader br = null;
     File gpxfile;
-    String info2;
+
+    static String info2;
 
     public String getInfo2() {
         return info2;
+    }
+    public static void setInfo2(String info2) {
+        AudioRecordTest.info2 = info2;
     }
 
     private static final String LOG_TAG = "AudioRecordTest";
@@ -70,7 +77,6 @@ public class AudioRecordTest extends Activity {
     // go to the next label
     private NextButton mNextButton = null;
     private PreviousButton mPreviousButton =null;
-
 
     public static int timefile = 1;
 
@@ -231,6 +237,32 @@ public class AudioRecordTest extends Activity {
         mRecorder = null;
     }
 
+
+    public void readFromFile() {
+        StringBuilder text = new StringBuilder();
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(gpxfile));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+
+                text.append(line);
+                text.append('\n');
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.i("TextInfo", String.valueOf(text));
+
+        filetime = text.toString().split("\n");
+        Arrays.sort(filetime);
+        for (int i = 0; i < filetime.length - 1; i++) {
+            Log.i("Sorted array 2", filetime[i]);
+        }
+    };
+
     class RecordButton extends Button {
         boolean mStartRecording = true;
 
@@ -360,8 +392,6 @@ public class AudioRecordTest extends Activity {
             @Override
             public void onClick(View v) {
 
-                mCanvasView.drawLine();
-
                 if (mPlayer == null) {
                     after = System.currentTimeMillis();
                     android.util.Log.i("Time after click", " Time value in millisecinds " + after);
@@ -388,9 +418,12 @@ public class AudioRecordTest extends Activity {
                         writer.append(sBody + "\n");
                         writer.flush();
                         writer.close();
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    readFromFile();
+                    mCanvasView.drawLine();
 
                 } else {
 
@@ -419,9 +452,14 @@ public class AudioRecordTest extends Activity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    readFromFile();
+                    mCanvasView.drawLine();
                 }
             }
         });
+
+
+
 
         //play first label
         mLabelPlayButton.setOnClickListener(new OnClickListener() {
@@ -430,28 +468,31 @@ public class AudioRecordTest extends Activity {
             public void onClick(View v) {
                 boolean mStartPlaying = true;
 
-                StringBuilder text = new StringBuilder();
+                readFromFile();
 
-                try {
-                    BufferedReader br = new BufferedReader(new FileReader(gpxfile));
-                    String line;
 
-                    while ((line = br.readLine()) != null) {
-
-                        text.append(line);
-                        text.append('\n');
-                    }
-                    br.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                Log.i("TextInfo", String.valueOf(text));
-
-                filetime = text.toString().split("\n");
-                Arrays.sort(filetime);
-                for (int i = 0; i < filetime.length - 1; i++) {
-                    Log.i("Sorted array", filetime[i]);
-                }
+//                StringBuilder text = new StringBuilder();
+//
+//                try {
+//                    BufferedReader br = new BufferedReader(new FileReader(gpxfile));
+//                    String line;
+//
+//                    while ((line = br.readLine()) != null) {
+//
+//                        text.append(line);
+//                        text.append('\n');
+//                    }
+//                    br.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                Log.i("TextInfo", String.valueOf(text));
+//
+//                filetime = text.toString().split("\n");
+//                Arrays.sort(filetime);
+//                for (int i = 0; i < filetime.length - 1; i++) {
+//                    Log.i("Sorted array", filetime[i]);
+//                }
 
                 mCanvasView = new CanvasView(AudioRecordTest.this);
 
@@ -520,9 +561,11 @@ public class AudioRecordTest extends Activity {
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         0));
-        
+
         setContentView(ll);
     }
+
+
 
     @Override
     public void onPause() {

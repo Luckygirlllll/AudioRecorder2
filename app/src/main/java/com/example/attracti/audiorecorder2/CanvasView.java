@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -33,21 +32,42 @@ public class CanvasView extends View {
 //    }
 
     //constructor
-    public CanvasView(AudioRecordTest context,int x, int y) {
+//    public CanvasView(AudioRecordTest context,int x, int y) {
+//        super(context);
+//        mPaint = new Paint();
+//        audio = (AudioRecordTest)context;
+//
+//        this.startX = x;
+//        this.startY = y;
+//    }
+
+    public CanvasView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        mPaint = new Paint();
+    }
+
+    public CanvasView(Context context) {
         super(context);
         mPaint = new Paint();
-        audio = (AudioRecordTest)context;
+    }
 
-        this.startX = x;
-        this.startY = y;
+    public void drawLine() {
+        Random random = new Random();
+        startX = random.nextInt(1000);
+
+        Log.i("nextInt", String.valueOf(startX));
+        Log.i("nextInt", String.valueOf(startY));
+
+        //important. Refreshes the view by calling onDraw function
+        invalidate();
     }
 
 
 
-    public void drawLine(int i1, int i) {
-
+//    public void drawLine(int i1, int i) {
+//
 //        Random random = new Random();
-//        startX = random.nextInt(1000);
+//          startX = random.nextInt(1000);
 //        Log.i("nextInt", String.valueOf(startX));
 //        Log.i("nextInt", String.valueOf(startY));
 //        startX=startY;
@@ -58,24 +78,28 @@ public class CanvasView extends View {
         // x=time*1000/300 000
         // x= time/300
 
-        int timeImp= audio.getTimefile();
-        Log.i("timeImp", String.valueOf(timeImp));
-        String timeImp2=audio.getInfo2();
-        Log.i("timeImp2", String.valueOf(timeImp2));
-      //  int labeltime= audio.getLabeltime();
-      //  Log.i("labeltime", String.valueOf(labeltime));
-       // int timeImp3=Integer.parseInt(timeImp2);
-       // Log.i("timeImp3", String.valueOf(timeImp3));
+//        if (audio!=null) {
+//            String[] timeImp = audio.getFiletime();
+//            if (timeImp != null) {
+//                Log.i("Time in the canvas view", String.valueOf(audio.getFiletime()));
+//            }
+//        }
+
+      // int labeltime= audio.getLabeltime();
+      // Log.i("labeltime", String.valueOf(labeltime));
+      // int timeImp3=Integer.parseInt(timeImp2);
+      // Log.i("timeImp3", String.valueOf(timeImp3));
 
 //        startX=x;
 //        startY=y;
 
-        Log.i("startX", String.valueOf(startX));
-        Log.i("startY", String.valueOf(startY));
-        //important. Refreshes the view by calling onDraw function
-        invalidate();
 
-    }
+//        Log.i("startX", String.valueOf(startX));
+//        Log.i("startY", String.valueOf(startY));
+//        //important. Refreshes the view by calling onDraw function
+//        invalidate();
+//
+//    }
 
 
     protected void onDraw(Canvas canvas) {
@@ -89,7 +113,7 @@ public class CanvasView extends View {
         canvas.drawLine(0, 300, 1000, 300, mPaint);
         canvas.drawLine(0, 400, 1000, 400, mPaint);
         mPaint.setColor(Color.BLUE);
-        canvas.drawLine(startX, 200, startY, 400, mPaint);
+        canvas.drawLine(startX, 200, startX, 400, mPaint);
         Log.i("startX2", String.valueOf(startX));
         Log.i("startY2", String.valueOf(startY));
     }

@@ -30,24 +30,22 @@ import java.util.List;
 
 public class AudioRecordTest extends Activity {
 
-    //start of the audio track
     long start;
-    //time of the label
     long after;
 
     int current=1;
     int currlabel=1;
 
+
+
     String [] filetime = new String [100];
+    public String[] getFiletime() {
+        return filetime;
+    }
 
     CanvasView mCanvasView;
 
     private static int labeltime;
-
-    public int getLabeltime() {
-        return labeltime;
-    }
-
 
     BufferedReader br = null;
     File gpxfile;
@@ -362,6 +360,8 @@ public class AudioRecordTest extends Activity {
             @Override
             public void onClick(View v) {
 
+                mCanvasView.drawLine();
+
                 if (mPlayer == null) {
                     after = System.currentTimeMillis();
                     android.util.Log.i("Time after click", " Time value in millisecinds " + after);
@@ -375,7 +375,6 @@ public class AudioRecordTest extends Activity {
                     int sBody = difference;
 
                     Log.i("Current", String.valueOf(labeltime));
-                    mCanvasView.drawLine(400, 400);
 
                     try {
                         // File root = new File(Environment.getExternalStorageDirectory()+File.separator+"Music_Folder", "Report Files");
@@ -394,6 +393,7 @@ public class AudioRecordTest extends Activity {
                     }
 
                 } else {
+
                     info2 = String.valueOf(mPlayer.getCurrentPosition());
                     labeltime = mPlayer.getCurrentPosition();
 
@@ -403,7 +403,6 @@ public class AudioRecordTest extends Activity {
                     String sBody = info2;
 
                     Log.i("Current", String.valueOf(labeltime));
-                    mCanvasView.drawLine(400, 400);
 
                     try {
                         // File root = new File(Environment.getExternalStorageDirectory()+File.separator+"Music_Folder", "Report Files");
@@ -425,7 +424,6 @@ public class AudioRecordTest extends Activity {
         });
 
         //play first label
-
         mLabelPlayButton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -451,13 +449,12 @@ public class AudioRecordTest extends Activity {
 
                 filetime = text.toString().split("\n");
                 Arrays.sort(filetime);
-                for(int i=0; i<filetime.length-1;i++){
-                   Log.i("Sorted array", filetime[i] );
+                for (int i = 0; i < filetime.length - 1; i++) {
+                    Log.i("Sorted array", filetime[i]);
                 }
 
-//                mCanvasView.drawLine(400, 400);
-                mCanvasView = new CanvasView(AudioRecordTest.this, 800, 800);
-                mCanvasView.invalidate();
+                mCanvasView = new CanvasView(AudioRecordTest.this);
+
                 onPlayLabel(mStartPlaying);
             }
         });
@@ -499,10 +496,8 @@ public class AudioRecordTest extends Activity {
 
                 Log.i("Iinfo!!!!", String.valueOf(current));
 
-//                mCanvasView.drawLine(400, 400);
-                mCanvasView = new CanvasView(AudioRecordTest.this, 800, 800);
+                mCanvasView = new CanvasView(AudioRecordTest.this);
                 mCanvasView.invalidate();
-                //  mPlayer.seekTo(timeNext);
                 onPlayNext(mStartPlaying);
             }
         });
@@ -518,15 +513,14 @@ public class AudioRecordTest extends Activity {
         });
 
 
-        mCanvasView = new CanvasView(AudioRecordTest.this, 400, 400);
+        mCanvasView = new CanvasView(AudioRecordTest.this);
 
         ll.addView(mCanvasView,
                 new LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         0));
-        mCanvasView.drawLine(400, 400);
-
+        
         setContentView(ll);
     }
 

@@ -35,8 +35,7 @@ public class AudioRecordTest extends Activity {
 
     int current = 1;
     int currlabel = 1;
-
-
+    
     static String[] filetime = new String[100];
 
     public String[] getFiletime() {
@@ -402,12 +401,13 @@ public class AudioRecordTest extends Activity {
                     int difference = (int) (after - start);
                     Log.i("difference", String.valueOf(difference));
 
-                    // here should be a method write to file
+                    // here should be a method which writes data to the file
+
+                    int sBody = difference;
+
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd");
                     Date now = new Date();
                     String fileName = formatter.format(now) + ".txt";//like 2016_01_12.txt
-                    int sBody = difference;
-
                     Log.i("Current", String.valueOf(labeltime));
 
                     try {
@@ -433,12 +433,11 @@ public class AudioRecordTest extends Activity {
 
                     info2 = String.valueOf(mPlayer.getCurrentPosition());
                     labeltime = mPlayer.getCurrentPosition();
+                    String sBody = info2;
 
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd");
                     Date now = new Date();
                     String fileName = formatter.format(now) + ".txt";//like 2016_01_12.txt
-                    String sBody = info2;
-
                     Log.i("Current", String.valueOf(labeltime));
 
                     try {

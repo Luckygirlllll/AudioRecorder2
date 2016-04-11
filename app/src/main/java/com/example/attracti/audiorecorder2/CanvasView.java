@@ -17,7 +17,7 @@ import java.util.Random;
 public class CanvasView extends View {
     public Paint mPaint;
     public static Canvas mCanvas;
-    private int startX = 50;
+    private int startX = 0;
 
     static String[] times;
 
@@ -41,7 +41,10 @@ public class CanvasView extends View {
         // x=time*1000/300 000
         // x= time/300
 
-//        Log.i("TIME!!!", audio.getInfo2());
+
+        //TODO
+        // fix error which appear while press stop button when audio is finished
+        // create customise waveforms for audio
 
         times = audio.getFiletime();
 
@@ -50,16 +53,14 @@ public class CanvasView extends View {
         }
 
         Log.i("Number of times", String.valueOf(times.length));
-//        Random random = new Random();
-//        startX = random.nextInt(1000);
+
         for (int i = 0; i < times.length; i++) {
             Log.i("startX1", startX + " ");
-            startX = Integer.parseInt(audio.getFiletime()[i]) / 10;
+            startX = Integer.parseInt(audio.getFiletime()[i]) / 440;
             Log.i("startX2", startX + "");
         }
 
         Log.i("startX3", startX + " ");
-        //  Log.i("nextInt", String.valueOf(startY));
 
         //important. Refreshes the view by calling onDraw function
         invalidate();
@@ -77,16 +78,14 @@ public class CanvasView extends View {
         canvas.drawLine(0, 300, 1000, 300, mPaint);
         canvas.drawLine(0, 400, 1000, 400, mPaint);
         mPaint.setColor(Color.BLUE);
-
-        //   if(times!=null) {
-        //      Log.i("Number of times 2", String.valueOf(times.length));
-        //      for(int i=0; i<times.length; i++) {
         canvas.drawLine(startX, 200, startX, 400, mPaint);
-        //    }
-        // }
-
-        //  canvas.drawLine(startX, 200, startX, 400, mPaint);
-        //   Log.i("startX2", String.valueOf(startX));
-        //  Log.i("startY2", String.valueOf(startY));
+           if(times!=null) {
+              Log.i("Number of times 2", String.valueOf(times.length));
+              for(int i=0; i<times.length; i++) {
+                  startX = Integer.parseInt(audio.getFiletime()[i]) / 440;
+                  canvas.drawLine(startX, 200, startX, 400, mPaint);
+                  Log.i("startX!!!!", String.valueOf(startX));
+            }
+         }
     }
 }

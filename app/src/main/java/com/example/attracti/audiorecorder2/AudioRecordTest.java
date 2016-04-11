@@ -35,7 +35,7 @@ public class AudioRecordTest extends Activity {
 
     int current = 1;
     int currlabel = 1;
-    
+
     static String[] filetime = new String[100];
 
     public String[] getFiletime() {

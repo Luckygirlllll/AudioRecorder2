@@ -37,7 +37,7 @@ public class CanvasView extends View {
 
         // 5 minutes = 5*60*1000 = 300 000
         // 300 000 ---> 1000
-        // 1020 --->x
+        // time --->x
         // x=time*1000/300 000
         // x= time/300
 

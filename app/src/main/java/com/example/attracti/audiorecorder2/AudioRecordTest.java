@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Locale;
 
 
 public class AudioRecordTest extends Activity {
@@ -365,7 +366,8 @@ public class AudioRecordTest extends Activity {
 
                     int sBody = difference;
 
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd");
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy_mm_dd_hh_mm",
+                            Locale.getDefault());;
                     Date now = new Date();
                     String fileName = formatter.format(now) + ".txt";//like 2016_01_12.txt
                     Log.i("Current", String.valueOf(labeltime));
@@ -395,7 +397,8 @@ public class AudioRecordTest extends Activity {
                     labeltime = mPlayer.getCurrentPosition();
                     String sBody = info2;
 
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd");
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy_mm_dd_hh_mm",
+                            Locale.getDefault());;
                     Date now = new Date();
                     String fileName = formatter.format(now) + ".txt";//like 2016_01_12.txt
                     Log.i("Current", String.valueOf(labeltime));

@@ -1,19 +1,18 @@
 package com.example.attracti.audiorecorder2;
 
 import android.app.Activity;
-import android.graphics.Canvas;
-import android.os.CountDownTimer;
-import android.widget.LinearLayout;
+import android.content.Context;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Environment;
-import android.view.ViewGroup;
-import android.widget.Button;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.content.Context;
-import android.util.Log;
-import android.media.MediaRecorder;
-import android.media.MediaPlayer;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,11 +20,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
 
 
 public class AudioRecordTest extends Activity {
@@ -66,18 +62,19 @@ public class AudioRecordTest extends Activity {
     private static final String LOG_TAG = "AudioRecordTest";
     private static String mFileName = null;
 
-    private RecordButton mRecordButton = null;
+
+    private RecordButton recordButton = null;
     private MediaRecorder mRecorder = null;
 
-    private PlayButton mPlayButton = null;
+    private PlayButton playButton = null;
     private MediaPlayer mPlayer = null;
 
-    private LabelButton mLabelButton = null;
-    private ImportantButton mLabelPlayButton = null;
+    private LabelButton labelButton = null;
+    private Button mLabelPlayButton = null;
 
     // go to the next label
-    private NextButton mNextButton = null;
-    private PreviousButton mPreviousButton = null;
+    private Button mNextButton = null;
+    private Button mPreviousButton = null;
 
     public static int timefile = 1;
 
@@ -266,7 +263,7 @@ public class AudioRecordTest extends Activity {
         }
     };
 
-    class RecordButton extends Button {
+   public class RecordButton extends Button {
         boolean mStartRecording = true;
 
         OnClickListener clicker = new OnClickListener() {
@@ -292,6 +289,19 @@ public class AudioRecordTest extends Activity {
         }
     }
 
+    public void test(){
+        LinearLayout linearLayout = (LinearLayout)findViewById(R.id.lin_one);
+        recordButton = new RecordButton(this);
+        playButton = new PlayButton(this);
+        labelButton = new LabelButton(this);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.weight = 1;
+
+        linearLayout.addView(recordButton,params);
+        linearLayout.addView(playButton,params);
+        linearLayout.addView(labelButton,params);
+    }
+
     class PlayButton extends Button {
         boolean mStartPlaying = true;
 
@@ -312,34 +322,12 @@ public class AudioRecordTest extends Activity {
             setText("Start playing");
             setOnClickListener(clicker);
         }
-
     }
 
-    class LabelButton extends Button {
+    public static class LabelButton extends Button {
         public LabelButton(Context ctx) {
             super(ctx);
             setText("Label");
-        }
-    }
-
-    class ImportantButton extends Button {
-        public ImportantButton(Context ctx) {
-            super(ctx);
-            setText("Play Label");
-        }
-    }
-
-    class NextButton extends Button {
-        public NextButton(Context ctx) {
-            super(ctx);
-            setText("Next Label");
-        }
-    }
-
-    class PreviousButton extends Button {
-        public PreviousButton(Context ctx) {
-            super(ctx);
-            setText("Previous Label");
         }
     }
 
@@ -351,47 +339,19 @@ public class AudioRecordTest extends Activity {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+        setContentView(R.layout.activity_main);
 
-        LinearLayout ll = new LinearLayout(this);
-        ll.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout ll= (LinearLayout) findViewById(R.id.lin_three);
 
-        mNextButton = new NextButton(this);
-        ll.addView(mNextButton,
-                new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        0));
+        mNextButton  =(Button) findViewById(R.id.test4);
+        mPreviousButton=(Button) findViewById(R.id.test5);
+        mLabelPlayButton=(Button) findViewById(R.id.test6);
 
-        mPreviousButton = new PreviousButton(this);
-        ll.addView(mPreviousButton,
-                new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        0));
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.weight = 1;
 
-
-        mRecordButton = new RecordButton(this);
-        ll.addView(mRecordButton,
-                new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        0));
-        mPlayButton = new PlayButton(this);
-        ll.addView(mPlayButton,
-                new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        0));
-        mLabelButton = new LabelButton(this);
-
-        mLabelPlayButton = new ImportantButton(this);
-        ll.addView(mLabelPlayButton,
-                new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        0));
-
-        mLabelButton.setOnClickListener(new OnClickListener() {
+        test();
+        labelButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -469,16 +429,10 @@ public class AudioRecordTest extends Activity {
                 boolean mStartPlaying = true;
                 readFromFile();
                 mCanvasView = new CanvasView(AudioRecordTest.this);
-             //   mCanvasView.drawLine();
                 onPlayLabel(mStartPlaying);
             }
         });
 
-        ll.addView(mLabelButton,
-                new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        0));
 
         mNextButton.setOnClickListener(new OnClickListener() {
 
@@ -508,7 +462,6 @@ public class AudioRecordTest extends Activity {
                     current++;
                 }
 
-
                 Log.i("Iinfo!!!!", String.valueOf(current));
 
                 mCanvasView = new CanvasView(AudioRecordTest.this);
@@ -535,8 +488,6 @@ public class AudioRecordTest extends Activity {
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         0));
-
-        setContentView(ll);
     }
 
     @Override
@@ -553,3 +504,6 @@ public class AudioRecordTest extends Activity {
         }
     }
 }
+
+
+

@@ -6,24 +6,111 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
+    <!--<LinearLayout-->
+        <!--android:id="@+id/conteiner"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:background="@android:color/darker_gray"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--android:layout_above="@+id/kick"-->
+        <!-->-->
+    <!--</LinearLayout>-->
     <LinearLayout
-        android:id="@+id/conteiner"
+        android:id="@+id/lin_one"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="3" >
+
+        <!--<com.example.attracti.audiorecorder2.AudioRecordTest.RecordButton-->
+            <!--android:id="@+id/test1"-->
+            <!--android:layout_width="78dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_column="1"-->
+            <!--android:layout_gravity="center_horizontal|fill_vertical"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:text="Test1" />-->
+
+        <!--<com.example.attracti.audiorecorder2.AudioRecordTest.LabelButton-->
+            <!--android:id="@+id/test2"-->
+            <!--android:layout_width="78dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_column="1"-->
+            <!--android:layout_gravity="center_horizontal|fill_vertical"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:text="Test2" />-->
+
+        <!--<Button-->
+            <!--android:id="@+id/test3"-->
+            <!--android:layout_width="78dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_column="1"-->
+            <!--android:layout_gravity="center_horizontal|fill_vertical"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:text="Test3" />-->
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/lin_two"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lin_one">
+
+        <Button
+            android:id="@+id/test4"
+            android:layout_width="78dp"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_gravity="center_horizontal|fill_vertical"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:text="Next Label" />
+        <Button
+            android:id="@+id/test5"
+            android:layout_width="78dp"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_gravity="center_horizontal|fill_vertical"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:text="Previous Label" />
+
+        <Button
+            android:id="@+id/test6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_gravity="center_horizontal|fill_vertical"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:text="Play Label" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lin_three"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/darker_gray"
-        android:layout_centerInParent="true"
-        android:layout_above="@+id/kick"
-        >
+        android:layout_below="@+id/lin_two">
+
+
     </LinearLayout>
 
-    <Button
-        android:id="@+id/kick"
-        android:layout_width="78dp"
-        android:layout_height="wrap_content"
-        android:layout_column="1"
-        android:layout_gravity="center_horizontal|fill_vertical"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:text="Label" />
+
+    <!--<Button-->
+        <!--android:id="@+id/kick"-->
+        <!--android:layout_width="78dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_column="1"-->
+        <!--android:layout_gravity="center_horizontal|fill_vertical"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:text="Label" />-->
 </RelativeLayout>

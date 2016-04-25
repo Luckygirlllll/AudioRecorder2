@@ -8,9 +8,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 /**
  * Created by Iryna on 4/5/16.
  */
@@ -43,8 +40,9 @@ public class CanvasView extends View {
 
 
         //TODO
-        // fix error which appear while press stop button when audio is finished
-        // create customise waveforms for audio
+        // fix error which appears while press the stop button (when audio is finished)
+        // create customize waveforms for audio
+        // create roller which will displays while audio is playing
 
         times = audio.getFiletime();
 

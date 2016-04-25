@@ -372,7 +372,7 @@ public class AudioRecordTest extends Activity {
 
                     try {
                         // File root = new File(Environment.getExternalStorageDirectory()+File.separator+"Music_Folder", "Report Files");
-                        File root = new File(Environment.getExternalStorageDirectory(), "Notes");
+                        File root = new File(Environment.getExternalStorageDirectory(), "Audio_Recorder");
                         if (!root.exists()) {
                             root.mkdirs();
                         }
@@ -402,7 +402,7 @@ public class AudioRecordTest extends Activity {
 
                     try {
                         // File root = new File(Environment.getExternalStorageDirectory()+File.separator+"Music_Folder", "Report Files");
-                        File root = new File(Environment.getExternalStorageDirectory(), "Notes");
+                        File root = new File(Environment.getExternalStorageDirectory(), "Audio_Recorder");
                         if (!root.exists()) {
                             root.mkdirs();
                         }

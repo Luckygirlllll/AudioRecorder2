@@ -592,9 +592,6 @@ public class AudioRecordTest extends AppCompatActivity {
 
     private void startImageCapture() {
         initHeaderFragmet();
-        //   startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE), TAKE_PICTURE_REQUEST_B);
-
-       // startActivityForResult(new Intent(AudioRecordTest.this, CameraActivity.class), TAKE_PICTURE_REQUEST_B);
     }
 
     private File openFileForImage() {

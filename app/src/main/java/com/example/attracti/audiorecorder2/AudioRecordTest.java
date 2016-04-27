@@ -1,21 +1,28 @@
 package com.example.attracti.audiorecorder2;
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -25,7 +32,7 @@ import java.util.Date;
 import java.util.Locale;
 
 
-public class AudioRecordTest extends Activity {
+public class AudioRecordTest extends AppCompatActivity {
 
     long start;
     long after;
@@ -79,6 +86,45 @@ public class AudioRecordTest extends Activity {
 
     public static int timefile = 1;
 
+    private static final int TAKE_PICTURE_REQUEST_B = 100;
+
+    //------Camera features
+
+    private ImageView mCameraImageView;
+    private Bitmap mCameraBitmap;
+    private Button mSaveImageButton;
+
+    ImageView imageView2;
+
+    private OnClickListener mCaptureImageButtonClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            startImageCapture();
+        }
+    };
+
+    private OnClickListener mSaveImageButtonClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            File saveFile = openFileForImage();
+            if (saveFile != null) {
+                saveImageToFile(saveFile);
+            } else {
+                Toast.makeText(AudioRecordTest.this, "Unable to open file for saving image.",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+    };
+
+    private void initHeaderFragmet() {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        CameraActivity cameraActivity = new CameraActivity();
+            fragmentTransaction.add(R.id.camera_frame2, cameraActivity);
+            fragmentTransaction.commit();
+        }
+
+//------Camera features
+
     public int getTimefile() {
         return timefile;
     }
@@ -90,6 +136,7 @@ public class AudioRecordTest extends Activity {
         } else {
             stopRecording();
         }
+
     }
 
     private void onPlay(boolean start) {
@@ -343,10 +390,23 @@ public class AudioRecordTest extends Activity {
         setContentView(R.layout.activity_main);
 
         LinearLayout ll= (LinearLayout) findViewById(R.id.lin_three);
-
         mNextButton  =(Button) findViewById(R.id.test4);
         mPreviousButton=(Button) findViewById(R.id.test5);
         mLabelPlayButton=(Button) findViewById(R.id.test6);
+
+        //-----Camera features
+      //  imageView2= (ImageView) findViewById(R.id.camera_image_view2);
+        mCameraImageView = (ImageView) findViewById(R.id.camera_image_view);
+
+        findViewById(R.id.capture_image_button).setOnClickListener(mCaptureImageButtonClickListener);
+
+        mSaveImageButton = (Button) findViewById(R.id.save_image_button);
+        mSaveImageButton.setOnClickListener(mSaveImageButtonClickListener);
+        mSaveImageButton.setEnabled(false);
+
+      //  initHeaderFragmet();
+        //----Camera features
+
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.weight = 1;
@@ -362,7 +422,6 @@ public class AudioRecordTest extends Activity {
                     int difference = (int) (after - start);
                     Log.i("difference", String.valueOf(difference));
 
-                    // here should be a method which writes data to the file
 
                     int sBody = difference;
 
@@ -404,7 +463,6 @@ public class AudioRecordTest extends Activity {
                     Log.i("Current", String.valueOf(labeltime));
 
                     try {
-                        // File root = new File(Environment.getExternalStorageDirectory()+File.separator+"Music_Folder", "Report Files");
                         File root = new File(Environment.getExternalStorageDirectory(), "Audio_Recorder");
                         if (!root.exists()) {
                             root.mkdirs();
@@ -506,6 +564,82 @@ public class AudioRecordTest extends Activity {
             mPlayer = null;
         }
     }
+    //--------------------------------Camera features
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == TAKE_PICTURE_REQUEST_B) {
+            if (resultCode == RESULT_OK) {
+                // Recycle the previous bitmap.
+                if (mCameraBitmap != null) {
+                    mCameraBitmap.recycle();
+                    mCameraBitmap = null;
+                }
+                Bundle extras = data.getExtras();
+                // mCameraBitmap = (Bitmap) extras.get("data");
+                byte[] cameraData = extras.getByteArray(CameraActivity.EXTRA_CAMERA_DATA);
+                if (cameraData != null) {
+                    mCameraBitmap = BitmapFactory.decodeByteArray(cameraData, 0, cameraData.length);
+                    mCameraImageView.setImageBitmap(mCameraBitmap);
+                    mSaveImageButton.setEnabled(true);
+                }
+            } else {
+                mCameraBitmap = null;
+                mSaveImageButton.setEnabled(false);
+            }
+        }
+    }
+
+    private void startImageCapture() {
+        initHeaderFragmet();
+        //   startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE), TAKE_PICTURE_REQUEST_B);
+
+       // startActivityForResult(new Intent(AudioRecordTest.this, CameraActivity.class), TAKE_PICTURE_REQUEST_B);
+    }
+
+    private File openFileForImage() {
+        File imageDirectory = null;
+        String storageState = Environment.getExternalStorageState();
+        if (storageState.equals(Environment.MEDIA_MOUNTED)) {
+            imageDirectory = new File(
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                    "CameraApp");
+            if (!imageDirectory.exists() && !imageDirectory.mkdirs()) {
+                imageDirectory = null;
+            } else {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_mm_dd_hh_mm",
+                        Locale.getDefault());
+
+                return new File(imageDirectory.getPath() +
+                        File.separator + "image_" +
+                        dateFormat.format(new Date()) + ".png");
+            }
+        }
+        return null;
+    }
+
+    private void saveImageToFile(File file) {
+        if (mCameraBitmap != null) {
+            FileOutputStream outStream = null;
+            try {
+                outStream = new FileOutputStream(file);
+                if (!mCameraBitmap.compress(Bitmap.CompressFormat.PNG, 100, outStream)) {
+                    Toast.makeText(AudioRecordTest.this, "Unable to save image to file.",
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(AudioRecordTest.this, "Saved image to: " + file.getPath(),
+                            Toast.LENGTH_LONG).show();
+                }
+                outStream.close();
+            } catch (Exception e) {
+                Toast.makeText(AudioRecordTest.this, "Unable to save image to file.",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+//-------Camera features
+
 }
 
 

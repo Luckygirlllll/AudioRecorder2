@@ -32,7 +32,7 @@ import java.util.Date;
 import java.util.Locale;
 
 
-public class AudioRecordTest extends AppCompatActivity {
+public class AudioRecord extends AppCompatActivity {
 
     long start;
     long after;
@@ -64,10 +64,10 @@ public class AudioRecordTest extends AppCompatActivity {
     }
 
     public static void setInfo2(String info2) {
-        AudioRecordTest.info2 = info2;
+        AudioRecord.info2 = info2;
     }
 
-    private static final String LOG_TAG = "AudioRecordTest";
+    private static final String LOG_TAG = "AudioRecord";
     private static String mFileName = null;
 
 
@@ -110,7 +110,7 @@ public class AudioRecordTest extends AppCompatActivity {
             if (saveFile != null) {
                 saveImageToFile(saveFile);
             } else {
-                Toast.makeText(AudioRecordTest.this, "Unable to open file for saving image.",
+                Toast.makeText(AudioRecord.this, "Unable to open file for saving image.",
                         Toast.LENGTH_LONG).show();
             }
         }
@@ -379,7 +379,7 @@ public class AudioRecordTest extends AppCompatActivity {
         }
     }
 
-    public AudioRecordTest() {
+    public AudioRecord() {
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
         mFileName += "/audiorecordtest.3gp";
     }
@@ -489,7 +489,7 @@ public class AudioRecordTest extends AppCompatActivity {
             public void onClick(View v) {
                 boolean mStartPlaying = true;
                 readFromFile();
-                mCanvasView = new CanvasView(AudioRecordTest.this);
+                mCanvasView = new CanvasView(AudioRecord.this);
                 onPlayLabel(mStartPlaying);
             }
         });
@@ -525,7 +525,7 @@ public class AudioRecordTest extends AppCompatActivity {
 
                 Log.i("Iinfo!!!!", String.valueOf(current));
 
-                mCanvasView = new CanvasView(AudioRecordTest.this);
+                mCanvasView = new CanvasView(AudioRecord.this);
                 mCanvasView.invalidate();
                 onPlayNext(mStartPlaying);
             }
@@ -542,7 +542,7 @@ public class AudioRecordTest extends AppCompatActivity {
         });
 
 
-        mCanvasView = new CanvasView(AudioRecordTest.this);
+        mCanvasView = new CanvasView(AudioRecord.this);
 
         ll.addView(mCanvasView,
                 new LinearLayout.LayoutParams(
@@ -621,15 +621,15 @@ public class AudioRecordTest extends AppCompatActivity {
             try {
                 outStream = new FileOutputStream(file);
                 if (!mCameraBitmap.compress(Bitmap.CompressFormat.PNG, 100, outStream)) {
-                    Toast.makeText(AudioRecordTest.this, "Unable to save image to file.",
+                    Toast.makeText(AudioRecord.this, "Unable to save image to file.",
                             Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(AudioRecordTest.this, "Saved image to: " + file.getPath(),
+                    Toast.makeText(AudioRecord.this, "Saved image to: " + file.getPath(),
                             Toast.LENGTH_LONG).show();
                 }
                 outStream.close();
             } catch (Exception e) {
-                Toast.makeText(AudioRecordTest.this, "Unable to save image to file.",
+                Toast.makeText(AudioRecord.this, "Unable to save image to file.",
                         Toast.LENGTH_LONG).show();
             }
         }

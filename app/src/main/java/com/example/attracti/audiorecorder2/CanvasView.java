@@ -18,7 +18,7 @@ public class CanvasView extends View {
 
     static String[] times;
 
-    AudioRecordTest audio = new AudioRecordTest();
+    AudioRecord audio = new AudioRecord();
 
     public CanvasView(Context context, AttributeSet attrs) {
         super(context, attrs);

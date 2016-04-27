@@ -3,6 +3,7 @@ package com.example.attracti.audiorecorder2;
 /**
  * Created by attracti on 4/26/16.
  */
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -10,9 +11,11 @@ import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -22,12 +25,18 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.ZoomControls;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
-public class CameraActivity extends Fragment implements PictureCallback, SurfaceHolder.Callback {
+public class CameraFragment extends Fragment implements PictureCallback, SurfaceHolder.Callback {
 
-    private  Context context;
+    private Context context;
     private AppCompatActivity activity;
 
     public static final String EXTRA_CAMERA_DATA = "camera_data";
@@ -41,10 +50,23 @@ public class CameraActivity extends Fragment implements PictureCallback, Surface
     private byte[] mCameraData;
     private boolean mIsCapturing;
 
+    static int currentZoomLevel;
+    ZoomControls zoomControls;
+
+
+
+    private ImageView mCameraImageView;
+    private Bitmap mCameraBitmap;
+    private Button mSaveImageButton;
+
+    ImageView imageView2;
+
+
     private OnClickListener mCaptureImageButtonClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
             captureImage();
+
         }
     };
 
@@ -61,7 +83,7 @@ public class CameraActivity extends Fragment implements PictureCallback, Surface
             if (mCameraData != null) {
                 Intent intent = new Intent();
                 intent.putExtra(EXTRA_CAMERA_DATA, mCameraData);
-                 activity.setResult(activity.RESULT_OK, intent);
+                activity.setResult(activity.RESULT_OK, intent);
             } else {
                 activity.setResult(activity.RESULT_CANCELED);
             }
@@ -73,7 +95,7 @@ public class CameraActivity extends Fragment implements PictureCallback, Surface
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-        this.activity = (AppCompatActivity)context;
+        this.activity = (AppCompatActivity) context;
     }
 
     @Nullable
@@ -98,8 +120,26 @@ public class CameraActivity extends Fragment implements PictureCallback, Surface
         final Button doneButton = (Button) view.findViewById(R.id.done_button);
         doneButton.setOnClickListener(mDoneButtonClickListener);
 
+        zoomControls = (ZoomControls) view.findViewById(R.id.cameraZoom);
+
         mIsCapturing = true;
 
+        if (mCamera == null) {
+            try {
+                mCamera = Camera.open();
+                mCamera.setPreviewDisplay(mCameraPreview.getHolder());
+                mCamera.setDisplayOrientation(90);
+                if (mIsCapturing) {
+                    mCamera.startPreview();
+                }
+            } catch (Exception e) {
+                Toast.makeText(context, "Unable to open camera.", Toast.LENGTH_LONG)
+                        .show();
+            }
+        }
+
+        zoom();
+        
         return view;
     }
 
@@ -110,7 +150,7 @@ public class CameraActivity extends Fragment implements PictureCallback, Surface
         savedInstanceState.putBoolean(KEY_IS_CAPTURING, mIsCapturing);
     }
 
-//    @Override
+    //    @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
 //        super.onRestoreInstanceState(savedInstanceState);
 
@@ -137,6 +177,80 @@ public class CameraActivity extends Fragment implements PictureCallback, Surface
             } catch (Exception e) {
                 Toast.makeText(context, "Unable to open camera.", Toast.LENGTH_LONG)
                         .show();
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult( int requestCode, int resultCode, Intent data) {
+        Log.i("onActivityResult", "image");
+//        if (requestCode == TAKE_PICTURE_REQUEST_B) {
+//            if (resultCode == RESULT_OK) {
+
+                // Recycle the previous bitmap.
+                if (mCameraBitmap != null) {
+                    mCameraBitmap.recycle();
+                    mCameraBitmap = null;
+                }
+                Bundle extras = data.getExtras();
+                // mCameraBitmap = (Bitmap) extras.get("data");
+                byte[] cameraData = extras.getByteArray(CameraFragment.EXTRA_CAMERA_DATA);
+                if (cameraData != null) {
+                    mCameraBitmap = BitmapFactory.decodeByteArray(cameraData, 0, cameraData.length);
+                    mCameraImageView.setImageBitmap(mCameraBitmap);
+                    mSaveImageButton.setEnabled(true);
+                }
+//            } else {
+//                mCameraBitmap = null;
+//                mSaveImageButton.setEnabled(false);
+//            }
+//        }
+    }
+
+
+    private File openFileForImage() {
+        File imageDirectory = null;
+        String storageState = Environment.getExternalStorageState();
+        if (storageState.equals(Environment.MEDIA_MOUNTED)) {
+            imageDirectory = new File(
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                    "CameraApp");
+            if (!imageDirectory.exists() && !imageDirectory.mkdirs()) {
+                imageDirectory = null;
+            } else {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_mm_dd_hh_mm",
+                        Locale.getDefault());
+
+                return new File(imageDirectory.getPath() +
+                        File.separator + "image_" +
+                        dateFormat.format(new Date()) + ".png");
+            }
+        }
+        return null;
+    }
+
+    private void saveImageToFile(File file) {
+        Log.i("Save", "Save image");
+        if (mCameraBitmap != null) {
+            Log.i("Save", "Save image2");
+            FileOutputStream outStream = null;
+            try {
+                outStream = new FileOutputStream(file);
+                if (!mCameraBitmap.compress(Bitmap.CompressFormat.PNG, 100, outStream)) {
+//                    Toast.makeText(AudioRecord.this, "Unable to save image to file.",
+//                            Toast.LENGTH_LONG).show();
+                    Log.i("Image", "Unable to save image to file.");
+                } else {
+//                    Toast.makeText(AudioRecord.this, "Saved image to: " + file.getPath(),
+//                            Toast.LENGTH_LONG).show();
+                    Log.i("Image", "Saved image to:"+file.getPath());
+                }
+                outStream.close();
+            } catch (Exception e) {
+//                Toast.makeText(AudioRecord.this, "Unable to save image to file.",
+//                        Toast.LENGTH_LONG).show();
+                Log.i("Image", "Unable to save image to file.");
+                e.printStackTrace();
             }
         }
     }
@@ -181,6 +295,7 @@ public class CameraActivity extends Fragment implements PictureCallback, Surface
 
     private void captureImage() {
         mCamera.takePicture(null, null, this);
+
     }
 
     private void setupImageCapture() {
@@ -201,5 +316,46 @@ public class CameraActivity extends Fragment implements PictureCallback, Surface
         mCaptureImageButton.setText(R.string.recapture_image);
         mCaptureImageButton.setOnClickListener(mRecaptureImageButtonClickListener);
     }
+
+    public void zoom() {
+
+        final Camera.Parameters params = mCamera.getParameters();
+        if (params.isZoomSupported()) {
+            final int maxZoomLevel = params.getMaxZoom();
+            Log.i("max ZOOM ", "is " + maxZoomLevel);
+            zoomControls.setIsZoomInEnabled(true);
+            zoomControls.setIsZoomOutEnabled(true);
+
+
+            zoomControls.setIsZoomInEnabled(true);
+            zoomControls.setIsZoomOutEnabled(true);
+
+            zoomControls.setOnZoomInClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    currentZoomLevel = params.getZoom();
+                    if (currentZoomLevel < maxZoomLevel) {
+                        currentZoomLevel++;
+                        mCamera.startSmoothZoom(currentZoomLevel);
+                        params.setZoom(currentZoomLevel);
+                        mCamera.setParameters(params);
+                    }
+                }
+            });
+
+            zoomControls.setOnZoomOutClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    if (currentZoomLevel > 0) {
+                        currentZoomLevel--;
+                        params.setZoom(currentZoomLevel);
+                        mCamera.setParameters(params);
+                    }
+                }
+            });
+        } else
+            zoomControls.setVisibility(View.GONE);
+    }
 }
+
+
+
 

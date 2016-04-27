@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CameraActivity"
+            android:name=".CameraFragment"
             android:label="@string/capture_image"
             android:screenOrientation="portrait" />
     </application>

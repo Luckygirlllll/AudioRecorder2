@@ -100,6 +100,7 @@ public class AudioRecord extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             startImageCapture();
+            mSaveImageButton.setEnabled(true);
         }
     };
 
@@ -118,7 +119,7 @@ public class AudioRecord extends AppCompatActivity {
 
     private void initHeaderFragmet() {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        CameraActivity cameraActivity = new CameraActivity();
+        CameraFragment cameraActivity = new CameraFragment();
             fragmentTransaction.add(R.id.camera_frame2, cameraActivity);
             fragmentTransaction.commit();
         }
@@ -128,7 +129,6 @@ public class AudioRecord extends AppCompatActivity {
     public int getTimefile() {
         return timefile;
     }
-
 
     private void onRecord(boolean start) {
         if (start) {
@@ -395,7 +395,6 @@ public class AudioRecord extends AppCompatActivity {
         mLabelPlayButton=(Button) findViewById(R.id.test6);
 
         //-----Camera features
-      //  imageView2= (ImageView) findViewById(R.id.camera_image_view2);
         mCameraImageView = (ImageView) findViewById(R.id.camera_image_view);
 
         findViewById(R.id.capture_image_button).setOnClickListener(mCaptureImageButtonClickListener);
@@ -404,9 +403,7 @@ public class AudioRecord extends AppCompatActivity {
         mSaveImageButton.setOnClickListener(mSaveImageButtonClickListener);
         mSaveImageButton.setEnabled(false);
 
-      //  initHeaderFragmet();
         //----Camera features
-
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.weight = 1;
@@ -541,7 +538,6 @@ public class AudioRecord extends AppCompatActivity {
             }
         });
 
-
         mCanvasView = new CanvasView(AudioRecord.this);
 
         ll.addView(mCanvasView,
@@ -568,6 +564,7 @@ public class AudioRecord extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i("onActivityResult", "image");
         if (requestCode == TAKE_PICTURE_REQUEST_B) {
             if (resultCode == RESULT_OK) {
                 // Recycle the previous bitmap.
@@ -577,7 +574,7 @@ public class AudioRecord extends AppCompatActivity {
                 }
                 Bundle extras = data.getExtras();
                 // mCameraBitmap = (Bitmap) extras.get("data");
-                byte[] cameraData = extras.getByteArray(CameraActivity.EXTRA_CAMERA_DATA);
+                byte[] cameraData = extras.getByteArray(CameraFragment.EXTRA_CAMERA_DATA);
                 if (cameraData != null) {
                     mCameraBitmap = BitmapFactory.decodeByteArray(cameraData, 0, cameraData.length);
                     mCameraImageView.setImageBitmap(mCameraBitmap);
@@ -616,21 +613,27 @@ public class AudioRecord extends AppCompatActivity {
     }
 
     private void saveImageToFile(File file) {
+        Log.i("Save", "Save image");
         if (mCameraBitmap != null) {
+            Log.i("Save", "Save image2");
             FileOutputStream outStream = null;
             try {
                 outStream = new FileOutputStream(file);
                 if (!mCameraBitmap.compress(Bitmap.CompressFormat.PNG, 100, outStream)) {
                     Toast.makeText(AudioRecord.this, "Unable to save image to file.",
                             Toast.LENGTH_LONG).show();
+                    Log.i("Image", "Unable to save image to file.");
                 } else {
                     Toast.makeText(AudioRecord.this, "Saved image to: " + file.getPath(),
                             Toast.LENGTH_LONG).show();
+                    Log.i("Image", "Saved image to:"+file.getPath());
                 }
                 outStream.close();
             } catch (Exception e) {
                 Toast.makeText(AudioRecord.this, "Unable to save image to file.",
                         Toast.LENGTH_LONG).show();
+                Log.i("Image", "Unable to save image to file.");
+                e.printStackTrace();
             }
         }
     }

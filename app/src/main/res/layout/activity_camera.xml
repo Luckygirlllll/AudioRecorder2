@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#999999"
     android:orientation="vertical" >
-
-    <!--<RelativeLayout-->
-        <!--android:id="@+id/camera_frame"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:layout_weight="1" >-->
 
         <ImageView
             android:id="@+id/camera_image_view"
@@ -33,8 +28,6 @@
             android:layout_below="@+id/preview_view"
             android:id="@+id/cameraZoom">
         </ZoomControls>
-
-    <!--</RelativeLayout>-->
 
     <LinearLayout
         android:id="@+id/button_frame"

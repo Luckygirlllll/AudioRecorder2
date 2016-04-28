@@ -8,6 +8,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.Bundle;
@@ -17,6 +22,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -24,17 +30,20 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.ZoomControls;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class CameraFragment extends Fragment implements PictureCallback, SurfaceHolder.Callback {
+public class CameraFragment extends Fragment
+        implements SurfaceHolder.Callback, AudioRecord.TakePictureListener, AudioRecord.SavePictureListener {
 
     private Context context;
     private AppCompatActivity activity;
@@ -42,38 +51,47 @@ public class CameraFragment extends Fragment implements PictureCallback, Surface
     public static final String EXTRA_CAMERA_DATA = "camera_data";
 
     private static final String KEY_IS_CAPTURING = "is_capturing";
+    private static final int TAKE_PICTURE_REQUEST_B = 100;
 
     private Camera mCamera;
     private ImageView mCameraImage;
     private SurfaceView mCameraPreview;
     private Button mCaptureImageButton;
-    private byte[] mCameraData;
+    private static byte[] mCameraData;
     private boolean mIsCapturing;
 
     static int currentZoomLevel;
     ZoomControls zoomControls;
 
-
+    private Bitmap mCameraBitmap;
 
     private ImageView mCameraImageView;
-    private Bitmap mCameraBitmap;
-    private Button mSaveImageButton;
 
     ImageView imageView2;
 
+    Bitmap bitmap;
+    Canvas canvas;
+    Paint paint;
 
-    private OnClickListener mCaptureImageButtonClickListener = new OnClickListener() {
+    private OnClickListener mSaveImageButtonClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            captureImage();
-
+            File saveFile = openFileForImage();
+            if (saveFile != null) {
+                saveImageToFile(saveFile);
+            } else {
+                Toast.makeText(context, "Unable to open file for saving image.",
+                        Toast.LENGTH_LONG).show();
+            }
         }
     };
+
 
     private OnClickListener mRecaptureImageButtonClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
             setupImageCapture();
+            mCameraImage.setImageBitmap(bitmap);
         }
     };
 
@@ -88,6 +106,14 @@ public class CameraFragment extends Fragment implements PictureCallback, Surface
                 activity.setResult(activity.RESULT_CANCELED);
             }
             activity.finish();
+        }
+    };
+
+    OnClickListener mCaptureImageButtonClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            captureImage();
+
         }
     };
 
@@ -106,9 +132,12 @@ public class CameraFragment extends Fragment implements PictureCallback, Surface
                 container, false);
 
         mCameraImage = (ImageView) view.findViewById(R.id.camera_image_view);
-        mCameraImage.setVisibility(View.INVISIBLE);
+        // mCameraImage.setVisibility(View.INVISIBLE);
 
         mCameraPreview = (SurfaceView) view.findViewById(R.id.preview_view);
+
+        RelativeLayout fragment = (RelativeLayout) view.findViewById(R.id.fragment);
+        fragment.setOnTouchListener(onTouchListener);
 
         final SurfaceHolder surfaceHolder = mCameraPreview.getHolder();
         surfaceHolder.addCallback(this);
@@ -124,24 +153,63 @@ public class CameraFragment extends Fragment implements PictureCallback, Surface
 
         mIsCapturing = true;
 
-        if (mCamera == null) {
-            try {
-                mCamera = Camera.open();
-                mCamera.setPreviewDisplay(mCameraPreview.getHolder());
-                mCamera.setDisplayOrientation(90);
-                if (mIsCapturing) {
-                    mCamera.startPreview();
-                }
-            } catch (Exception e) {
-                Toast.makeText(context, "Unable to open camera.", Toast.LENGTH_LONG)
-                        .show();
+//        if (mCamera == null) {
+//            Log.i("Camera open", "Camera open");
+        try {
+            mCamera = Camera.open();
+            Log.i("Camera open2", "Camera open2");
+            mCamera.setPreviewDisplay(mCameraPreview.getHolder());
+            mCamera.setDisplayOrientation(90);
+            if (mIsCapturing) {
+                mCamera.startPreview();
             }
+        } catch (Exception e) {
+            Toast.makeText(context, "Unable to open camera.", Toast.LENGTH_LONG)
+                    .show();
+            Log.i("Unable to open camera", "Unable to open camera");
         }
-
+//        }
         zoom();
-        
+
+
+        bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
+        canvas = new Canvas(bitmap);
+        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setColor(Color.BLACK);
+        canvas.drawCircle(50, 50, 10, paint);
+        mCameraImage.setImageBitmap(bitmap);
+
+        canvas.drawBitmap(bitmap, 0, 0, null);
+        canvas.drawRoundRect(new RectF(800, 800, 800, 800), 2, 2, paint);
+        mCameraImage.setImageDrawable(new BitmapDrawable(getResources(), bitmap));
+
         return view;
     }
+
+    private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
+        public boolean onTouch(View v, MotionEvent event) {
+            int x = (int) event.getX();
+            int y = (int) event.getY();
+            Log.i("X", "case 0 " + x);
+            Log.i("Y", "case 0 " + y);
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    Log.i("X", "case 1 " + x);
+                    Log.i("Y", "case 1 " + y);
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    Log.i("X", "case 2 " + x);
+                    Log.i("Y", "case 2 " + y);
+                    break;
+                case MotionEvent.ACTION_UP:
+                    Log.i("X", "case 3 " + x);
+                    Log.i("Y", "case 3 " + y);
+                    break;
+            }
+            return true;
+        }
+    };
+
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -150,64 +218,30 @@ public class CameraFragment extends Fragment implements PictureCallback, Surface
         savedInstanceState.putBoolean(KEY_IS_CAPTURING, mIsCapturing);
     }
 
-    //    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState);
 
-        mIsCapturing = savedInstanceState.getBoolean(KEY_IS_CAPTURING, mCameraData == null);
-        if (mCameraData != null) {
-            setupImageDisplay();
-        } else {
-            setupImageCapture();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if (mCamera == null) {
-            try {
-                mCamera = Camera.open();
-                mCamera.setPreviewDisplay(mCameraPreview.getHolder());
-                mCamera.setDisplayOrientation(90);
-                if (mIsCapturing) {
-                    mCamera.startPreview();
-                }
-            } catch (Exception e) {
-                Toast.makeText(context, "Unable to open camera.", Toast.LENGTH_LONG)
-                        .show();
-            }
-        }
-    }
-
-    @Override
-    public void onActivityResult( int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.i("onActivityResult", "image");
-//        if (requestCode == TAKE_PICTURE_REQUEST_B) {
-//            if (resultCode == RESULT_OK) {
-
+        if (requestCode == TAKE_PICTURE_REQUEST_B) {
+            if (resultCode == AppCompatActivity.RESULT_OK) {
+                Log.i("Bitmap", "bitmap recycled");
                 // Recycle the previous bitmap.
                 if (mCameraBitmap != null) {
                     mCameraBitmap.recycle();
                     mCameraBitmap = null;
                 }
                 Bundle extras = data.getExtras();
-                // mCameraBitmap = (Bitmap) extras.get("data");
                 byte[] cameraData = extras.getByteArray(CameraFragment.EXTRA_CAMERA_DATA);
                 if (cameraData != null) {
                     mCameraBitmap = BitmapFactory.decodeByteArray(cameraData, 0, cameraData.length);
                     mCameraImageView.setImageBitmap(mCameraBitmap);
-                    mSaveImageButton.setEnabled(true);
+                    //   mSaveImageButton.setEnabled(true);
                 }
-//            } else {
-//                mCameraBitmap = null;
+            } else {
+                mCameraBitmap = null;
 //                mSaveImageButton.setEnabled(false);
-//            }
-//        }
+            }
+        }
     }
-
-
     private File openFileForImage() {
         File imageDirectory = null;
         String storageState = Environment.getExternalStorageState();
@@ -237,18 +271,18 @@ public class CameraFragment extends Fragment implements PictureCallback, Surface
             try {
                 outStream = new FileOutputStream(file);
                 if (!mCameraBitmap.compress(Bitmap.CompressFormat.PNG, 100, outStream)) {
-//                    Toast.makeText(AudioRecord.this, "Unable to save image to file.",
-//                            Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Unable to save image to file.",
+                            Toast.LENGTH_LONG).show();
                     Log.i("Image", "Unable to save image to file.");
                 } else {
-//                    Toast.makeText(AudioRecord.this, "Saved image to: " + file.getPath(),
-//                            Toast.LENGTH_LONG).show();
-                    Log.i("Image", "Saved image to:"+file.getPath());
+                    Toast.makeText(context, "Saved image to: " + file.getPath(),
+                            Toast.LENGTH_LONG).show();
+                    Log.i("Image", "Saved image to:" + file.getPath());
                 }
                 outStream.close();
             } catch (Exception e) {
-//                Toast.makeText(AudioRecord.this, "Unable to save image to file.",
-//                        Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Unable to save image to file.",
+                        Toast.LENGTH_LONG).show();
                 Log.i("Image", "Unable to save image to file.");
                 e.printStackTrace();
             }
@@ -263,12 +297,6 @@ public class CameraFragment extends Fragment implements PictureCallback, Surface
             mCamera.release();
             mCamera = null;
         }
-    }
-
-    @Override
-    public void onPictureTaken(byte[] data, Camera camera) {
-        mCameraData = data;
-        setupImageDisplay();
     }
 
     @Override
@@ -294,9 +322,60 @@ public class CameraFragment extends Fragment implements PictureCallback, Surface
     }
 
     private void captureImage() {
-        mCamera.takePicture(null, null, this);
+        mCamera.takePicture(null, null, new PictureCallback() {
+            @Override
+            public void onPictureTaken(byte[] data, Camera camera) {
+                Log.i("Data", "Data: "+data+"Length"+data.length);
+                mCameraData = data;
+                Log.i("Real saving", "Real saving");
+                File imageDirectory = null;
+                imageDirectory = new File(
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                        "CameraApp");
+                if (!imageDirectory.exists() && !imageDirectory.mkdirs()) {
+                    imageDirectory = null;
+                } else {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_mm_dd_hh_mm_ss",
+                            Locale.getDefault());
+                    File file = new File(
+                    imageDirectory.getPath() +
+                            File.separator + "image_" +
+                            dateFormat.format(new Date()) + ".png");
 
+                    FileOutputStream fos = null;
+                    try {
+                        fos = new FileOutputStream(file);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        fos.write(data);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        fos.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        fos.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Bitmap bitmap = BitmapFactory.decodeByteArray(mCameraData, 0, mCameraData.length);
+                mCameraImage.setImageBitmap(bitmap);
+                mCamera.stopPreview();
+                mCameraPreview.setVisibility(View.INVISIBLE);
+                mCameraImage.setVisibility(View.VISIBLE);
+                mCameraImage.setRotation(90);
+                mCaptureImageButton.setText(R.string.recapture_image);
+                mCaptureImageButton.setOnClickListener(mRecaptureImageButtonClickListener);
+            }
+            });
     }
+
 
     private void setupImageCapture() {
         mCameraImage.setVisibility(View.INVISIBLE);
@@ -353,6 +432,21 @@ public class CameraFragment extends Fragment implements PictureCallback, Surface
             });
         } else
             zoomControls.setVisibility(View.GONE);
+    }
+
+    public void savePicture() {
+        File saveFile = openFileForImage();
+        if (saveFile != null) {
+            saveImageToFile(saveFile);
+            Log.i("Trying to save file", "Trying to save file");
+        } else {
+            Toast.makeText(context, "Unable to open file for saving image.",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void takePicture() {
+
     }
 }
 
